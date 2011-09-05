@@ -11,6 +11,7 @@
 # * the disk is referenced by label, so use "blkid" or browse /dev/disk/by-label to get familiar with disk name
 # * the backup system is semi-friendly by using "cp's" -b [OPTION], this keeps a 2 file history of multiple backups of the same file name
 #     (so if you get an 'Oh sh**' moment, you MIGHT not have to worry :P)
+# * there is also a fancy loading bar that clutters things up, it is not neccessary to keep
 
 
 if [ $# -eq 1 ]
