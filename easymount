@@ -1,0 +1,22 @@
+#!/bin/bash
+# A script for automatically mounting a disk under /media/<disk-label>
+# as long as your labels are all unique, this should work fine
+# goes togheter with easyumount
+#
+# Usage: I have the label of my disk, so i can now mount it by:
+#    sudo easymount <Disk label>
+
+if [ $# -eq 1 ]
+then
+    if [ ! -d /media/$1 ]
+    then
+	mkdir -p /media/$1
+    fi
+    echo -ne '[###############               ](50%)\r'
+    mount /dev/disk/by-label/$1 /media/$1
+    echo -ne '[##############################](100%)'
+    echo "Done!"
+else
+    echo "Usage: easymount <disk-by-label>"
+fi
+
