@@ -1,0 +1,18 @@
+USAGE:
+    sudo backup <drive LABEL Name> [other dir in home]
+
+Notes:
+* if [other dir in home] is not specified, a dir named /home/$USER/important is
+    attempted to be backed-up.
+* make sure you don't have multiple disks with the same name! and renaming disks to 
+    short nice names will help as well.
+* you might have to replace $USER with your actual username unless you are copying a
+    file from root's home or can mount disks without sudo. :)
+    in that case you can call the command without sudo entirely
+* the disk is referenced by label, so use "blkid" or browse /dev/disk/by-label/ to get
+    familiar with disk name
+* the backup system is semi-friendly by using "cp's" -b [OPTION], this keeps a 2 file
+    history of multiple backups of the same file name
+    (so if you get an 'Oh sh**' moment, you MIGHT not have to worry :P)
+* it also uses the -u option, that only cp's if source file is newer than destination,
+    (or if no destination file is available)
