@@ -1,0 +1,26 @@
+#!/bin/bash
+
+input=$1
+input_noext=${input%.*}
+
+echo $#
+
+if [ "$#" -eq 1 ]; then
+    ffmpeg -i $input -vf fps=15,scale=320:-1:flags=lanczos,palettegen /tmp/palette.png
+
+    ffmpeg -i $input -i /tmp/palette.png \
+           -filter_complex 'fps=10,scale=400:-1:flags=lanczos[x];[x][1:v]paletteuse' $input_noext.gif
+elif [ "$#" -eq 2  ]; then
+    ffmpeg -i $input -vf fps=15,scale=320:-1:flags=lanczos,palettegen /tmp/palette.png
+
+    ffmpeg -i $input -i /tmp/palette.png \
+           -filter_complex 'fps=10,scale='$2':-1:flags=lanczos[x];[x][1:v]paletteuse' $input_noext.gif
+elif [ "$#" -eq 3  ]; then
+    ffmpeg -i $input -vf fps=15,scale=320:-1:flags=lanczos,palettegen /tmp/palette.png
+
+    echo 'fps='$3',scale='$2':-1:flags=lanczos[x];[x][1:v]paletteuse'
+    ffmpeg -i $input -i /tmp/palette.png \
+           -filter_complex 'fps='$3',scale='$2':-1:flags=lanczos[x];[x][1:v]paletteuse' $input_noext.gif
+fi
+
+rm /tmp/palette.png

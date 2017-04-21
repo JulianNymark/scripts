@@ -1,0 +1,3 @@
+#!/bin/bash
+
+gpick -spo | xclip -i
