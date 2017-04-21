@@ -1,6 +1,0 @@
-USAGE:
-	$ projectInit <language>
-NOTES:
-* This file only saves 2 lines of typing currently, but is intended to make
-    starting small projects faster by creating the directory tree +  other
-    neccessities (for C a generic Makefile is included(see Makefiles))

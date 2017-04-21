@@ -1,6 +1,0 @@
-USAGE:
-	$ appletLaunch <your_java.class>
-
-NOTE:
-1. uses javas appletviewer, make sure you have it
-2. enter full path from package root (if using packages)
