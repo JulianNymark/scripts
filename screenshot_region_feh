@@ -1,0 +1,44 @@
+#!/bin/bash
+
+file='/tmp/screenshot/scrot.png'
+
+cd $HOME/Media/pictures/screenshots
+mkdir -p /tmp/screenshot
+#maim -s $file # RIP crashing Xorg every now and then (it used to be fine though)
+#scrot -s $file # RIP shitty rectangles on your screenshot xD
+#spectacle -bnr -o $file # RIP mouse in screenshot, overlay + select + confirm
+#escrotum -s $file # RIP too slow to start, 0.5 seconds... yuck (the selection rectangle briefly flickers top left, but does not appear in screenshot)
+#lightscreen (GUI forced / not cmd friendly, needs to boot & requires configuration, probably gotta kill the 'GUI' component & select 'just hide' everytime I use it D:, needs to run constantly, captures its own hotkeys... otherwise a good screenshot util)
+#screengrab, forces a gui popup, no option to disable, also has overlay
+
+### 'complete utilities above ^^', more 'diy' solutions below this!
+
+#xrectsel looks good, but the dev says slop is better, so gonna check that out first :D
+
+#slop + imagemagick = bliss! (fast + nothing fancy happens!)
+# actually it gets proportionally slower the bigger the region you select :/
+# up to around 4 seconds for the entire screen!!...(just to import + crop... yuck)
+# read -r G < <(slop -f "%g")
+# import -window root -crop $G $file
+
+# ffmpeg is great (it's only a little slow on smaller regions, but gets faster the bigger the selection!)
+# read -r DIM OFFSET < <(slop -f "%wx%h %x,%y")
+# ffmpeg -y -video_size $DIM -f x11grab -i :0.0+$OFFSET -vframes 1 $file
+
+read -r DIM OFFSET < <(slop -f "%wx%h %x,%y")
+ffmpeg -y -video_size $DIM -f x11grab -i :0.0+$OFFSET -vframes 1 -preset ultrafast $file
+
+################### dumping pile of ffmpeg... stuff
+# read -r CROP < <(slop -f "%w:%h:%x:%y")
+# echo "crop="$CROP
+#ffmpeg -y -f x11grab -i $DISPLAY -vf "crop="$CROP -threads 5 -preset ultrafast -strict -2 -vframes 1 $file
+# read -r DIM OFFSET < <(slop -f "%wx%h %x,%y") # working!
+# ffmpeg -y -f x11grab -i $DISPLAY+$OFFSET -s $DIM -threads 5 -vframes 1 $file
+#ffmpeg -y -f x11grab -i $DISPLAY -vframes 1 $file
+#-i input -vframes 1 -q:v 2 output.jpg
+# ffmpeg -i movie.mp4 -vf "crop=640:256:0:400" -threads 5 -preset ultrafast -strict -2 YourCroppedMovie.mp4
+################### end
+
+xclip -t image/png -selection clipboard -i < $file
+feh -x --cycle-once --geometry 250x250 --zoom fill -B black $file
+#rm -r /tmp/screenshot

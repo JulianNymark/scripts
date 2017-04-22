@@ -1,0 +1,12 @@
+#!/bin/zsh
+
+xrdb .Xdefaults
+
+BG_MAXCOL=20
+FG_MINCOL=150
+
+bg_color="#`printf '%02x%02x%02x' $((RANDOM % BG_MAXCOL)) $((RANDOM % BG_MAXCOL)) $((RANDOM % BG_MAXCOL))`"
+fg_color="#`printf '%02x%02x%02x' $(((RANDOM % BG_MAXCOL) + FG_MINCOL)) $(((RANDOM % BG_MAXCOL) + FG_MINCOL)) $(((RANDOM % BG_MAXCOL) + FG_MINCOL))`"
+fg_color="#c0c0c0"
+
+exec urxvt -bg $bg_color -fg $fg_color "$@"

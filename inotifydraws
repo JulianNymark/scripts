@@ -1,0 +1,10 @@
+#!/bin/bash
+
+cd /home/j/Media/pictures/draws
+
+source /home/j/.keychain/ripsoon-sh
+
+while inotifywait -e close_write -qq .; do
+    rsync -av --include="*.png" --include="*.jpg" --include="*.gif" --exclude="*" . pi:~/draws/distribute/
+    rsync -av --include="*.png" --include="*.jpg" --include="*.gif" --exclude="*" . imp:~/draws/distribute/
+done
