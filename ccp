@@ -12,5 +12,5 @@ fi
 files="$(xclip -o)"
 
 for i in $files; do
-    mv $i $1
+    cp $i $1
 done
