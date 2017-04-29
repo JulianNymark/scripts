@@ -1,0 +1,120 @@
+#!/bin/bash
+
+if [ $# != 2 ]; then
+    echo "Usage:"
+    echo "> sms <recipient(s)> <text>"
+    exit 1
+fi
+
+mynumber="YOURNUMBERHERE"
+mypassword="YOURPASSWORDHERE"
+
+recipients="$1"
+message="$2"
+
+# if cookie and cookie-jar don't work, look into extracting the value 'mitticeidsrv' from cookie (when posting login form to mitt.ice.no )
+
+#############
+# get session / token
+
+curl -s 'https://mitt.ice.no/' \
+     -H 'Pragma: no-cache' \
+     -H 'Accept-Encoding: gzip, deflate, sdch, br' \
+     -H 'Accept-Language: en-US,en;q=0.8' \
+     -H 'Upgrade-Insecure-Requests: 1' \
+     -H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8' \
+     -H 'Referer: https://mitt.ice.no/Home/User' \
+     -H 'Connection: keep-alive' \
+     -H 'Cache-Control: no-cache' \
+     --cookie-jar cookies.txt \
+     --cookie cookies.txt \
+     --compressed
+
+echo -e "\n"
+
+curl -s 'https://mitt.ice.no/' \
+     -H 'Pragma: no-cache' \
+     -H 'Origin: https://mitt.ice.no' \
+     -H 'Accept-Encoding: gzip, deflate, br' \
+     -H 'Accept-Language: en-US,en;q=0.8' \
+     -H 'Upgrade-Insecure-Requests: 1' \
+     -H 'Content-Type: application/x-www-form-urlencoded' \
+     -H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8' \
+     -H 'Cache-Control: no-cache' \
+     -H 'Referer: https://mitt.ice.no/' \
+     -H 'Connection: keep-alive' \
+     --cookie-jar cookies.txt \
+     --cookie cookies.txt \
+     --data 'msisdn='$mynumber'&password='$mypassword \
+     --compressed
+
+echo -e "\n"
+
+curl -s 'https://mitt.ice.no/Account/CreateSession' \
+     -H 'Pragma: no-cache' \
+     -H 'Accept-Encoding: gzip, deflate, sdch, br' \
+     -H 'Accept-Language: en-US,en;q=0.8' \
+     -H 'Upgrade-Insecure-Requests: 1' \
+     -H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8' \
+     -H 'Referer: https://mitt.ice.no/' \
+     -H 'Connection: keep-alive' \
+     -H 'Cache-Control: no-cache' \
+     --cookie-jar cookies.txt \
+     --cookie cookies.txt \
+     --compressed
+
+echo -e "\n"
+
+# curl 'https://mitt.ice.no/Home/User' \
+#      -H 'Pragma: no-cache' \
+#      -H 'Accept-Encoding: gzip, deflate, sdch, br' \
+#      -H 'Accept-Language: en-US,en;q=0.8' \
+#      -H 'Upgrade-Insecure-Requests: 1' \
+#      -H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8' \
+#      -H 'Referer: https://mitt.ice.no/' \
+#      -H 'Connection: keep-alive' \
+#      -H 'Cache-Control: no-cache' \
+#      --cookie-jar cookies.txt \
+#      --cookie cookies.txt \
+#      --compressed
+
+#token="$(cat cookies.txt | grep '__RequestVerificationToken' | cut -d'	' -f7)"
+# ^ the token in the cookie jar seems to be the wrong token for sending sms's...
+
+# trying to parse page for another token?
+token="$(curl -s 'https://mitt.ice.no/Home/User' \
+     -H 'Pragma: no-cache' \
+     -H 'Accept-Encoding: gzip, deflate, sdch, br' \
+     -H 'Accept-Language: en-US,en;q=0.8' \
+     -H 'Upgrade-Insecure-Requests: 1' \
+     -H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8' \
+     -H 'Referer: https://mitt.ice.no/' \
+     -H 'Connection: keep-alive' \
+     -H 'Cache-Control: no-cache' \
+     --cookie-jar cookies.txt \
+     --cookie cookies.txt \
+     --compressed | grep '__RequestVerificationToken' | sed -n 's/.*value="\(.*\)".*/\1/p')"
+
+echo -e "\n"
+
+##########
+# SendSms
+### parameterized
+curl -s 'https://mitt.ice.no/Home/SendSms' \
+     -H 'Origin: https://mitt.ice.no' \
+     -H 'Cookie: __RequestVerificationToken='$token \
+     -H 'Accept-Encoding: gzip, deflate, br' \
+     -H 'Accept-Language: en-US,en;q=0.8' \
+     -H 'Content-Type: application/x-www-form-urlencoded; charset=UTF-8' \
+     -H 'Accept: application/json, text/javascript, */*; q=0.01' \
+     -H 'Referer: https://mitt.ice.no/Home/User' \
+     -H 'X-Requested-With: XMLHttpRequest' \
+     -H 'Connection: keep-alive' \
+     --cookie-jar cookies.txt \
+     --cookie cookies.txt \
+     --data-urlencode 'MessageText'="$message" \
+     --data 'Recipients'=$recipients \
+     --data '__RequestVerificationToken'=$token \
+     --compressed
+
+rm cookies.txt
