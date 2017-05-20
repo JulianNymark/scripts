@@ -2,12 +2,7 @@
 
 cd /home/j/Media/Pictures/draws
 
-source /home/j/.keychain/m-sh
-
-# while inotifywait -e close_write -qq .; do
-#     rsync -av --include="*.png" --include="*.jpg" --include="*.gif" --exclude="*" . pi:~/draws/to_process/
-#     rsync -av --include="*.png" --include="*.jpg" --include="*.gif" --exclude="*" . imp:~/draws/to_process/
-# done
+source /home/j/.keychain/ripsoon-sh
 
 inotifywait -m -e close_write,moved_to,create  . |
     while read -r directory events filename; do
