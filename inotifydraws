@@ -1,10 +1,20 @@
-#!/bin/bash
+#!/bin/zsh
 
-cd /home/j/Media/pictures/draws
+cd /home/j/Media/Pictures/draws
 
-source /home/j/.keychain/ripsoon-sh
+source /home/j/.keychain/m-sh
 
-while inotifywait -e close_write -qq .; do
-    rsync -av --include="*.png" --include="*.jpg" --include="*.gif" --exclude="*" . pi:~/draws/distribute/
-    rsync -av --include="*.png" --include="*.jpg" --include="*.gif" --exclude="*" . imp:~/draws/distribute/
-done
+# while inotifywait -e close_write -qq .; do
+#     rsync -av --include="*.png" --include="*.jpg" --include="*.gif" --exclude="*" . pi:~/draws/to_process/
+#     rsync -av --include="*.png" --include="*.jpg" --include="*.gif" --exclude="*" . imp:~/draws/to_process/
+# done
+
+inotifywait -m -e close_write,moved_to,create  . |
+    while read -r directory events filename; do
+        echo "filtering $filename on file extension..."
+        if [[ "$filename" =~ ^.*\.\(jpg\|png\|gif\)$ ]]; then
+            echo "rsyncing $filename..."
+            rsync -av "$filename" pi:~/draws/to_process/
+            rsync -av "$filename" imp:~/draws/to_process/
+        fi
+    done
