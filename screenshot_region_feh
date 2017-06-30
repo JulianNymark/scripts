@@ -2,7 +2,7 @@
 
 file='/tmp/screenshot/scrot.png'
 
-cd $HOME/Media/pictures/screenshots
+cd $HOME/Media/Pictures/screenshots
 mkdir -p /tmp/screenshot
 #maim -s $file # RIP crashing Xorg every now and then (it used to be fine though)
 #scrot -s $file # RIP shitty rectangles on your screenshot xD
