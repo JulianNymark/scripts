@@ -2,8 +2,10 @@
 
 file='/tmp/screenshot/scrot.png'
 
+mkdir -p $HOME/Media/Pictures/screenshots
 cd $HOME/Media/Pictures/screenshots
 mkdir -p /tmp/screenshot
+
 #maim -s $file # RIP crashing Xorg every now and then (it used to be fine though)
 #scrot -s $file # RIP shitty rectangles on your screenshot xD
 #spectacle -bnr -o $file # RIP mouse in screenshot, overlay + select + confirm
@@ -26,7 +28,7 @@ mkdir -p /tmp/screenshot
 # ffmpeg -y -video_size $DIM -f x11grab -i :0.0+$OFFSET -vframes 1 $file
 
 read -r DIM OFFSET < <(slop -f "%wx%h %x,%y")
-ffmpeg -y -video_size $DIM -f x11grab -i :0.0+$OFFSET -vframes 1 -preset ultrafast $file
+ffmpeg -y -video_size $DIM -f x11grab -draw_mouse 0 -i :0.0+$OFFSET -vframes 1 -preset ultrafast $file
 
 ################### dumping pile of ffmpeg... stuff
 # read -r CROP < <(slop -f "%w:%h:%x:%y")
