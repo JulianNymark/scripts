@@ -1,0 +1,7 @@
+#!/bin/bash
+
+file='/tmp/screenshot/meme.png'
+
+xclip -o -selection clipboard | $HOME/go/bin/meme -t "$1" -o $file -i -
+feh $file
+xclip -t image/png -selection clipboard -i < $file
