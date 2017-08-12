@@ -1,7 +1,24 @@
 #!/bin/bash
+set -euo pipefail
 
 file='/tmp/screenshot/meme.png'
 
-xclip -o -selection clipboard | $HOME/go/bin/meme -t "$1" -o $file -i -
+case "$#" in
+    1)
+        echo "reading meme from clipboard"
+        xclip -o -selection clipboard | $HOME/go/bin/meme -t "$1" -o $file -i -
+        ;;
+    2)
+        echo  "reading meme from template/filepath"
+        $HOME/go/bin/meme -t "$1" -o $file -i "$2"
+        ;;
+    *)
+        echo "Usage:"
+        echo "> clipmeme <text>				# assumes clipboard input"
+        echo "> clipmeme <text> <template/filepath>"
+        exit 1
+        ;;
+esac
+
 feh $file
 xclip -t image/png -selection clipboard -i < $file
