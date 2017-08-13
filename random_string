@@ -1,0 +1,17 @@
+#!/bin/bash
+set -euo pipefail
+
+case "$#" in
+    0)
+        cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 64 | head -n 1
+        ;;
+    1)
+        cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w "$1" | head -n 1
+        ;;
+    *)
+        echo "Usage:"
+        echo "> random_string					# assumes 64 characters"
+        echo "> random_string <string length>"
+        exit 1
+        ;;
+esac
