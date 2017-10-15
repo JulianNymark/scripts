@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+
+for region in `aws ec2 describe-regions --output text | cut -f3`
+do
+     echo -e "$region..."
+     aws ec2 describe-instances --region $region | jq '.Reservations[].Instances[] | .PublicDnsName'
+done
