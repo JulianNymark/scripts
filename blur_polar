@@ -1,7 +1,23 @@
 #!/bin/bash
-TEMP_DIR=/tmp/blur_polar/
+INPUT_FILE=''
+OUT_DIR=/tmp/blur_polar/
+case "$#" in
+0)
+	echo "using image from \"clipboard\""
+	INPUT_FILE='/tmp/screenshot/scrot.png'
+	;;
+1)
+	echo "reading meme from template/filepath"
+	INPUT_FILE=$1
+	;;
+*)
+	echo "Usage:"
+	echo "> blur_polar [filepath]"
+	exit 1
+	;;
+esac
 
-DIMS=$(identify $1 | cut -d' ' -f3)
+DIMS=$(identify $INPUT_FILE | cut -d' ' -f3)
 echo "DIMS: "$DIMS
 
 WIDTH=$(echo $DIMS | cut -d'x' -f1)
@@ -10,15 +26,18 @@ HEIGHT=$(echo $DIMS | cut -d'x' -f2)
 # lol / 2
 RADIUS=$(python -c 'import sys; import math; print(math.floor(int(sys.argv[1])) / 2)' $WIDTH)
 
-mkdir -p $TEMP_DIR
+mkdir -p $OUT_DIR
 convert -size $DIMS gradient: -rotate 90 \
-	+distort Polar "$RADIUS,0,.5,.5" +repage -crop $DIMS -flop $TEMP_DIR"gradient_polar.jpg"
-convert -size $DIMS $TEMP_DIR"gradient_polar-0.jpg" -background white \
-	-channel B -combine $TEMP_DIR"blur_map_angle.jpg"
+	+distort Polar "$RADIUS,0,.5,.5" +repage -crop $DIMS -flop $OUT_DIR"gradient_polar.jpg"
+convert -size $DIMS $OUT_DIR"gradient_polar-0.jpg" -background white \
+	-channel B -combine $OUT_DIR"blur_map_angle.jpg"
 convert -size $DIMS radial-gradient: -negate \
-	-gravity center +repage $TEMP_DIR"gradient_radial.jpg"
-convert -size $DIMS $TEMP_DIR"gradient_radial.jpg" $TEMP_DIR"gradient_radial.jpg" $TEMP_DIR"gradient_polar-0.jpg" \
-	-channel RGB -combine $TEMP_DIR"blur_map_polar.jpg"
-convert $1 $TEMP_DIR"blur_map_polar.jpg" \
+	-gravity center +repage $OUT_DIR"gradient_radial.jpg"
+convert -size $DIMS $OUT_DIR"gradient_radial.jpg" $OUT_DIR"gradient_radial.jpg" $OUT_DIR"gradient_polar-0.jpg" \
+	-channel RGB -combine $OUT_DIR"blur_map_polar.jpg"
+convert $INPUT_FILE $OUT_DIR"blur_map_polar.jpg" \
 	-compose blur -define compose:args=5x0+0+360 -composite \
-	blur_polar.jpg
+	$OUT_DIR"blur_polar.jpg"
+
+feh $OUT_DIR"blur_polar.jpg"
+xclip -t image/png -selection clipboard -i <$OUT_DIR"blur_polar.jpg"
