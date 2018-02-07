@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 file='/tmp/screenshot/scrot.png'
 
@@ -41,6 +41,10 @@ ffmpeg -y -video_size $DIM -f x11grab -draw_mouse 0 -i :0.0+$OFFSET -vframes 1 -
 # ffmpeg -i movie.mp4 -vf "crop=640:256:0:400" -threads 5 -preset ultrafast -strict -2 YourCroppedMovie.mp4
 ################### end
 
+convert $file /tmp/screenshot/scrot.jpg
+
 xclip -t image/png -selection clipboard -i < $file
-feh -x --cycle-once --geometry 250x250 --zoom fill -B black $file
+# feh -x --cycle-once --geometry 250x250 --zoom fill -B black $file
+kstart5 --ontop -- feh -x --cycle-once --geometry 250x250 --zoom fill -B black $file
+
 #rm -r /tmp/screenshot
