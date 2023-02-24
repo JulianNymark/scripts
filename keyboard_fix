@@ -1,7 +1,0 @@
-#!/bin/bash
-set -euo pipefail
-
-setxkbmap dvorak -option ctrl:nocaps -option compose:rwin -option altwin:swap_alt_win ; xset r rate 220 40
-xmodmap ~/.xmodmap
-
-#TODO fix function keys (flip with 'utility' keys)

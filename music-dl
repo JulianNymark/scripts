@@ -1,7 +1,0 @@
-#!/bin/zsh
-
-clipboard="$(xclip -o)"
-
-if [[ $# == 1 ]]; then
-    youtube-dl --extract-audio --audio-format mp3 --audio-quality 0 $clipboard -o $1".%(ext)s"
-fi

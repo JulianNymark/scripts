@@ -1,5 +1,0 @@
-#!/bin/bash
-set -euo pipefail
-
-qrencode -o /tmp/qr.png "$1"
-feh -F --force-aliasing -Z /tmp/qr.png
